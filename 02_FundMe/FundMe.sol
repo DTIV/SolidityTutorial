@@ -13,7 +13,8 @@ ABI = Application Binary interface : tells solidity and programming languages ho
   -- Anytime you want to interact with a deployed smart contract you need and ABI
 */
 
-
+// import link below is not valid in verson 0.8 and greater
+import "@chainlink/contracts/src/v0.7/vendor/SafeMathChainlink.sol";
 
 interface AggregatorV3Interface {
   function decimals() external view returns (uint8);
@@ -49,14 +50,36 @@ interface AggregatorV3Interface {
 }
 
 // Must be deployed to a network and not javascript vm because chainlink contracts dont exist there.
+// make sure all numbers are down to the 18th decimal
 contract FundMe {
+    // initializing safemath library for all uint256 in contract using a chainlink contract. not needed in versions > 0.8
+    using SafeMathChainlink for uint256;
+    
+    uint256 one_wei = 1000000000000000000;
+    uint256 one_gwei = 1000000000;
+    
     mapping(address => uint256) public addressToAmountFunded;
     // payable functions can be used to pay for things specifically with Ethereum
     function fund() public payable {
-        // msg.sender and msg.value are keywords in every contract call and tx 
-        // msg.sender is the sender of the contract call
-        // msg.value is the amount sent
+        /*
+             user must meet minimum fund amount
+             msg.sender and msg.value are keywords in every contract call and tx 
+             msg.sender is the sender of the contract call
+             msg.value is the amount sent
+        */
+        // set amount of $20usd converted to wei
+        uint256 minimumUSD = 20 * one_wei;
+        
+        // check if user value is correct using require function, and pass a revert error msg
+        require(getConversionRate(msg.value) >= minimumUSD, "Not enough ETH funded");
+        
+        //add sender and value to mapping
         addressToAmountFunded[msg.sender] += msg.value;
+    }
+    
+    function getUSDtoWei() public view returns(uint256){
+        uint256 minimumUSD = 20 * one_wei;
+        return minimumUSD;
     }
     
     function getVersion() public view returns(uint256){
@@ -69,6 +92,8 @@ contract FundMe {
         return priceFeed.version();
     }
     
+    // awnser = 4374.19648041  -- 8 decimals
+    // awnser * 10000000000 = 437419648041000000000
     function getPrice() public view returns(uint256){
         // Create a tuple of all returned values from latestRoundData
         // if int types are different that returns int type ie int/uint then typewrap the value to change int256(uint256)
@@ -82,13 +107,13 @@ contract FundMe {
           uint256 updatedAt,
           uint80 answeredInRound
         ) = priceFeed.latestRoundData();
-        return uint256(answer * 1000000000);
+        return uint256(answer * 10000000000);
     }
     
     function getConversionRate(uint256 ethAmount) public view returns(uint256){
         // get price from getPrice function
         uint256 ethPrice = getPrice();
-        uint256 ethAmountInUsd = (ethPrice * ethAmount);
+        uint256 ethAmountInUsd = (ethPrice * ethAmount)/ 1000000000000000000;
         return ethAmountInUsd;
     }
 }
