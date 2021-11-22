@@ -11,6 +11,8 @@ interface github repo from https://github.com/smartcontractkit/chainlink/blob/de
 
 ABI = Application Binary interface : tells solidity and programming languages how it can interact with another contract
   -- Anytime you want to interact with a deployed smart contract you need and ABI
+  
+Modifier : A Modifier is used to change to behavior of a funciton in a declarative way
 */
 
 // import link below is not valid in verson 0.8 and greater
@@ -52,13 +54,25 @@ interface AggregatorV3Interface {
 // Must be deployed to a network and not javascript vm because chainlink contracts dont exist there.
 // make sure all numbers are down to the 18th decimal
 contract FundMe {
-    // initializing safemath library for all uint256 in contract using a chainlink contract. not needed in versions > 0.8
+    // initializing safemath library for all uint256 in contract using a chainlink contract. not needed in versions > 0.8 - see overflow.sol as example
     using SafeMathChainlink for uint256;
     
     uint256 one_wei = 1000000000000000000;
     uint256 one_gwei = 1000000000;
     
     mapping(address => uint256) public addressToAmountFunded;
+    
+    // creating a funders address array to loop through and reset when money is withdrawed
+    address[] public funders;
+    
+    // constructor functions get called as soon as contract is deployed. use to set the owner of the contract
+    address public owner;
+    constructor() {
+        // msg.sender is who deployed the contract
+        owner = msg.sender;
+    }
+    
+    
     // payable functions can be used to pay for things specifically with Ethereum
     function fund() public payable {
         /*
@@ -75,6 +89,9 @@ contract FundMe {
         
         //add sender and value to mapping
         addressToAmountFunded[msg.sender] += msg.value;
+        
+        // pushing funders to address array
+        funders.push(msg.sender);
     }
     
     function getUSDtoWei() public view returns(uint256){
@@ -107,15 +124,37 @@ contract FundMe {
           uint256 updatedAt,
           uint80 answeredInRound
         ) = priceFeed.latestRoundData();
+        // making return value have 18 decimal places from current price
         return uint256(answer * 10000000000);
     }
     
     function getConversionRate(uint256 ethAmount) public view returns(uint256){
-        // get price from getPrice function
+        // get price from getPrice function and taking away 18 decimal places because return value is too large
         uint256 ethPrice = getPrice();
         uint256 ethAmountInUsd = (ethPrice * ethAmount)/ 1000000000000000000;
         return ethAmountInUsd;
     }
+    
+    modifier onlyOwner(){
+        /* wherever the underscore is the modifier runs the rest of the code or function, in this example we want the 
+            require function to run before the withdraw function, so the under score comes after the require function.
+            the underscore can be placed before,  require function would not apply
+        */
+        require(msg.sender == owner, "You are not the owner!");
+        _;
+    }
+    
+    // this refers to 'this' contract
+    // we dont want anyone to be able to withdraw all funds from the contract, so a owner is created and require function checks owner
+    // modifier ownlyOwner is added to the function
+    function withdraw() payable onlyOwner public {
+        // require(msg.sender == owner); moved to onlyOwner modifier
+        msg.sender.transfer(address(this).balance);
+        for (uint256 funderIndex=0; funderIndex<funders.length; funderIndex++){
+            // resetting funders back to zero when money is withrawed from contract
+            address funder = funders[funderIndex];
+            addressToAmountFunded[funder] = 0;
+        }
+        funders = new address[](0)
+    }
 }
-
-
