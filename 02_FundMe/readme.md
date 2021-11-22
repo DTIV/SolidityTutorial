@@ -11,6 +11,7 @@ Learn how to call contracts and functions from external contracts, and then usin
 
 - minimum USD value requried, in this case $20
 
-`solidity
-`
+```solidity
+uint256 minimumUSD = 20 * one_wei;
+```
 
