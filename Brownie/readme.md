@@ -30,7 +30,7 @@
     - add information for different wallets and when they are used
 6. create simple_storage_test.py in test Folder
     - test must be first word in file name
-    - tests are done in three catagories:
+    - simple tests are done in three catagories:
         1. Arrange
         2. Act
         3. Assert
