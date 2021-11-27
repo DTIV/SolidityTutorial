@@ -23,3 +23,8 @@
 2. Create deploy.py in scripts FOLDER
 3. Add account to brownie with 'brownie accounts new NAME'
     - view accounts with 'brownie accounts list'
+    - Always store real money in brownie with password -- not in .env
+5. create brownie-config.yaml
+    - tell brownie to pull data from .env file
+    - add 'dotenv: .env'
+    - add information for different wallets and when they are used
