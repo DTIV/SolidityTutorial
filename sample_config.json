@@ -1,3 +1,6 @@
 {
-  "pk": "PRIVATE_KEY"
+  "address": "WALLET_ADDRESS",
+  "pk": "PRIVATE_KEY",
+  "ganache_address": "GANACHE_ADDRESS",
+  "ganache_pk": "GANACHE_PRIVATE_KEY"
 }
