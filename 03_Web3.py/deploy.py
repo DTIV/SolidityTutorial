@@ -136,4 +136,10 @@ intall ganache-cli with:
 start ganache-cli by running 'ganache-cli'
 to always start with the same accounts run 'ganache-cli --deterministic"
 update httpProvider and address
+
+next, install brownie
+https://eth-brownie.readthedocs.io/en/stable/install.html
+brownie init to create new brownie project
+
+see 04_Brownie
 '''
