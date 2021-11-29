@@ -41,6 +41,33 @@ VS KeyBoard Shortcuts:[here](https://code.visualstudio.com/shortcuts/keyboard-sh
     - test               Run test cases in the tests/ folder
     - run                Run a script in the scripts/ folder
     - accounts           Manage local accounts
+        -list
     - networks           Manage network settings
+        -list
     - gui                Load the GUI to view opcodes and test coverage
     - analyze            Find security vulnerabilities using the MythX API
+
+-Deploying to testnet/mainnet
+    brownie run SCRIPT --network rinkeby
+
+## Brownie Fund Me
+-------
+- import FundMe contract and deploy.
+- verify smart contract on Etherscan
+
+### Manually Verify
+---
+1. Verify Contract: [HERE](https://rinkeby.etherscan.io/verifyContract)
+2. Enter code for smart contract
+    - imports with '@' wont work! Etherscan doesnt know NPM
+    - Code needs to be flattened
+
+### Brownie Verify
+---
+1. Get API Key from Etherscan.io
+2. Add API key to .env file
+3. Add Publish to contract deployment
+
+
+
+

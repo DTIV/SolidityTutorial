@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.6.6 <=0.9.0;
+pragma solidity ^0.6.0;
 /* 
 @chainlink/contracts is importing from npm package
 https://www.npmjs.com/package/@chainlink/contracts
 
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+
 use import link above instead of writing functions manually as done below
 
 interface github repo from https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol
@@ -15,41 +15,46 @@ ABI = Application Binary interface : tells solidity and programming languages ho
 Modifier : A Modifier is used to change to behavior of a funciton in a declarative way
 */
 
-// import link below is not valid in verson 0.8 and greater
-import "@chainlink/contracts/src/v0.7/vendor/SafeMathChainlink.sol";
-
-interface AggregatorV3Interface {
-  function decimals() external view returns (uint8);
-
-  function description() external view returns (string memory);
-
-  function version() external view returns (uint256);
-
-  // getRoundData and latestRoundData should both raise "No data present"
+// brownie is not aware of NPM packages, brownie can get from github!
+// edit brownie-config.yaml - if successfull adds dependancies to build/contracts
+// getRoundData and latestRoundData should both raise "No data present"
   // if they do not have data to report, instead of returning unset values
   // which could be misinterpreted as actual reported values.
-  function getRoundData(uint80 _roundId)
-    external
-    view
-    returns (
-      uint80 roundId,
-      int256 answer,
-      uint256 startedAt,
-      uint256 updatedAt,
-      uint80 answeredInRound
-    );
 
-  function latestRoundData()
-    external
-    view
-    returns (
-      uint80 roundId,
-      int256 answer,
-      uint256 startedAt,
-      uint256 updatedAt,
-      uint80 answeredInRound
-    );
-}
+import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
+
+import "@chainlink/contracts/src/v0.6/vendor/SafeMathChainlink.sol";
+
+// interface AggregatorV3Interface {
+//   function decimals() external view returns (uint8);
+
+//   function description() external view returns (string memory);
+
+//   function version() external view returns (uint256);
+
+  
+//   function getRoundData(uint80 _roundId)
+//     external
+//     view
+//     returns (
+//       uint80 roundId,
+//       int256 answer,
+//       uint256 startedAt,
+//       uint256 updatedAt,
+//       uint80 answeredInRound
+//     );
+
+//   function latestRoundData()
+//     external
+//     view
+//     returns (
+//       uint80 roundId,
+//       int256 answer,
+//       uint256 startedAt,
+//       uint256 updatedAt,
+//       uint80 answeredInRound
+//     );
+// }
 
 // Must be deployed to a network and not javascript vm because chainlink contracts dont exist there.
 // make sure all numbers are down to the 18th decimal
@@ -67,7 +72,7 @@ contract FundMe {
     
     // constructor functions get called as soon as contract is deployed. use to set the owner of the contract
     address public owner;
-    constructor() {
+    constructor() public {
         // msg.sender is who deployed the contract
         owner = msg.sender;
     }
@@ -155,6 +160,6 @@ contract FundMe {
             address funder = funders[funderIndex];
             addressToAmountFunded[funder] = 0;
         }
-        funders = new address[](0)
+        funders = new address[](0);
     }
 }
