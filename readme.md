@@ -55,19 +55,39 @@ VS KeyBoard Shortcuts:[here](https://code.visualstudio.com/shortcuts/keyboard-sh
 - import FundMe contract and deploy.
 - verify smart contract on Etherscan
 
-### Manually Verify
+Manually Verify
 ---
 1. Verify Contract: [HERE](https://rinkeby.etherscan.io/verifyContract)
 2. Enter code for smart contract
     - imports with '@' wont work! Etherscan doesnt know NPM
     - Code needs to be flattened
 
-### Brownie Verify
----
+Brownie Verify
+-------
 1. Get API Key from Etherscan.io
 2. Add API key to .env file
 3. Add Publish to contract deployment
 
+### Verify on local ganache
 
+2 Problems:
+    - priceFeed contract address is hardcoded to rinkeby network
+    - not on the local ganache brownie uses
+Solutions
+    - Forking
+    - Mocking
 
+- paramaterize the FundMe smart contract
+    - add to constructor which price feed to use on deploy
+- pass price feed address on deploy function
+- create addresses for different newtorks in brownie-config.yaml
+- if not on development network us a mock
 
+Mock contracts go in contracts/test folder
+
+- publish source also must be determined by current chain set in brownie-config.yaml
+- add deploy mock to functions.py 
+
+### Adding networks to brownie
+
+'brownie networks add '
